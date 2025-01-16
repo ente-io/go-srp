@@ -36,7 +36,7 @@ func NewClient(params *SRPParams, salt, identity, password, secret1 []byte) *SRP
 }
 
 func (c *SRPClient) ComputeA() []byte {
-	return intToBytes(c.A)
+	return padToN(c.A, c.Params)
 }
 
 // ComputeVerifier returns a verifier that is calculated as described in
@@ -55,8 +55,8 @@ func (c *SRPClient) SetB(Bb []byte) {
 	S := clientGetS(c.Params, c.Multiplier, c.X, c.Secret1, B, u)
 
 	c.K = getK(c.Params, S)
-	c.M1 = getM1(c.Params, intToBytes(c.A), Bb, S)
-	c.M2 = getM2(c.Params, intToBytes(c.A), c.M1, c.K)
+	c.M1 = getM1(c.Params, padToN(c.A, c.Params), Bb, S)
+	c.M2 = getM2(c.Params, padToN(c.A, c.Params), c.M1, c.K)
 
 	c.u = u               // Only for tests
 	c.s = intFromBytes(S) // Only for tests

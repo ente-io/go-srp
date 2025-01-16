@@ -24,6 +24,7 @@ func NewServer(params *SRPParams, Vb []byte, S2b []byte) *SRPServer {
 	secret2 := intFromBytes(S2b)
 
 	Bb := getB(params, multiplier, V, secret2)
+
 	B := intFromBytes(Bb)
 
 	return &SRPServer{
@@ -35,7 +36,7 @@ func NewServer(params *SRPParams, Vb []byte, S2b []byte) *SRPServer {
 }
 
 func (s *SRPServer) ComputeB() []byte {
-	return intToBytes(s.B)
+	return padToN(s.B, s.Params)
 }
 
 func (s *SRPServer) SetA(A []byte) {
@@ -44,7 +45,7 @@ func (s *SRPServer) SetA(A []byte) {
 	S := serverGetS(s.Params, s.Verifier, AInt, s.Secret2, U)
 
 	s.K = getK(s.Params, S)
-	s.M1 = getM1(s.Params, A, intToBytes(s.B), S)
+	s.M1 = getM1(s.Params, A, padToN(s.B, s.Params), S)
 	s.M2 = getM2(s.Params, A, s.M1, s.K)
 
 	s.u = U               // only for tests
